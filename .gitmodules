@@ -1,0 +1,6 @@
+[submodule "OpenGLExamples/dependencies/glfw"]
+	path = OpenGLExamples/dependencies/glfw
+	url = https://github.com/kochan96/glfw.git
+[submodule "OpenGLExamples/dependencies/glad"]
+	path = OpenGLExamples/dependencies/glad
+	url = https://github.com/kochan96/glad.git
