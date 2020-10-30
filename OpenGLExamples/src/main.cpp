@@ -4,7 +4,29 @@
 #include <OpenGLCore/Core/Window.h>
 #include <OpenGLCore/Graphics/Buffer.h>
 #include <OpenGLCore/Graphics/VertexArray.h>
+#include <OpenGLCore/Events/ApplicationEvent.h>
+#include <functional>
 
+bool running = false;
+
+bool OnClose(OpenGLCore::Events::WindowCloseEvent& closeEvent)
+{
+	running = false;
+	return true;
+}
+
+bool OnResize(OpenGLCore::Events::WindowResizeEvent& resizeEvent)
+{
+	glViewport(0, 0, resizeEvent.GetWidth(), resizeEvent.GetHeight());
+	return true;
+}
+
+void OnUpdate(OpenGLCore::Events::Event& event)
+{
+	OpenGLCore::Events::EventDispatcher eventDispatcher(event);
+	eventDispatcher.Dispatch<OpenGLCore::Events::WindowResizeEvent>(std::bind(&OnResize, std::placeholders::_1));
+	eventDispatcher.Dispatch<OpenGLCore::Events::WindowCloseEvent>(std::bind(&OnClose, std::placeholders::_1));
+}
 
 int main()
 {
@@ -19,6 +41,8 @@ int main()
 	{
 		return EXIT_FAILURE;
 	}
+
+	window.SetEventCallback(OnUpdate);
 
 	float vertices[] = {
 		-1.0f,-1.0f,
@@ -94,7 +118,9 @@ int main()
 	glUseProgram(shaderProgram);
 	vertexArray.Bind();
 
-	while (!glfwWindowShouldClose(window.GetNative()))
+	running = true;
+
+	while (running)
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -102,7 +128,6 @@ int main()
 
 		window.OnUpdate();
 	}
-
 
 	window.Shutdown();
 	return EXIT_SUCCESS;

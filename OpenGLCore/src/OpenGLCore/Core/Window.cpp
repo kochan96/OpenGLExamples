@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "OpenGLCore/Events/ApplicationEvent.h"
+
 namespace OpenGLCore
 {
 	static uint8_t windowCount = 0;
@@ -24,8 +26,6 @@ namespace OpenGLCore
 
 	bool Window::Init(const WindowInfo& windowInfo)
 	{
-		m_WindowInfo = windowInfo;
-
 		if (windowCount == 0)
 		{
 			if (!glfwInit())
@@ -43,9 +43,9 @@ namespace OpenGLCore
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE); //TODO: conditional enable
 
 		m_WindowHandle = glfwCreateWindow(
-			m_WindowInfo.Width,
-			m_WindowInfo.Height,
-			m_WindowInfo.Title.c_str(),
+			windowInfo.Width,
+			windowInfo.Height,
+			windowInfo.Title.c_str(),
 			NULL,
 			NULL);
 
@@ -67,7 +67,33 @@ namespace OpenGLCore
 			return false;
 		}
 
-		SetVSync(m_WindowInfo.VSync);
+		SetVSync(windowInfo.VSync);
+
+		m_WindowData.WindowInfo = windowInfo;
+
+		glfwSetWindowUserPointer(m_WindowHandle, &m_WindowData);
+
+		glfwSetWindowSizeCallback(m_WindowHandle, [](GLFWwindow* window, int width, int height)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				data.WindowInfo.Width = width;
+				data.WindowInfo.Height = height;
+
+				Events::WindowResizeEvent event(width, height);
+
+				if (data.EventCallback)
+					data.EventCallback(event);
+			});
+
+		glfwSetWindowCloseCallback(m_WindowHandle, [](GLFWwindow* window)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+				Events::WindowCloseEvent event;
+				if (data.EventCallback)
+					data.EventCallback(event);
+			});
+
+		//TODO: Key and mouse events
 
 		return true;
 	}
@@ -93,7 +119,7 @@ namespace OpenGLCore
 
 	bool Window::GetVSync() const
 	{
-		return m_WindowInfo.VSync;
+		return m_WindowData.WindowInfo.VSync;
 	}
 
 	void Window::SetVSync(bool enabled)
@@ -103,6 +129,17 @@ namespace OpenGLCore
 		else
 			glfwSwapInterval(0);
 
-		m_WindowInfo.VSync = enabled;
+		m_WindowData.WindowInfo.VSync = enabled;
+	}
+
+	void Window::InitCallbacks()
+	{
+		if (!m_WindowHandle)
+		{
+			//TODO log
+			return;
+		}
+
+		glfwSetWindowUserPointer(m_WindowHandle, &m_WindowData);
 	}
 }
