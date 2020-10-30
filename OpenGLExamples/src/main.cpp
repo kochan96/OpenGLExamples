@@ -4,6 +4,7 @@
 #include <OpenGLCore/Core/Window.h>
 #include <OpenGLCore/Graphics/Buffer.h>
 #include <OpenGLCore/Graphics/VertexArray.h>
+#include <OpenGLCore/Graphics/Program.h>
 #include <OpenGLCore/Events/ApplicationEvent.h>
 #include <functional>
 
@@ -50,72 +51,23 @@ int main()
 		0.0f,1.0f
 	};
 
-	const char* vertexShaderSource = "#version 440 core\n"
-		"layout (location = 0) in vec2 a_Position;\n"
-		"void main()\n"
-		"{\n"
-		"   gl_Position = vec4(a_Position.x, a_Position.y, 0.0f, 1.0);\n"
-		"}\0";
+	OpenGLCore::Graphics::Shader vertexShader("assets/simpleShader.vert", OpenGLCore::Graphics::ShaderType::Vertex);
+	OpenGLCore::Graphics::Shader fragmentShader("assets/simpleShader.frag", OpenGLCore::Graphics::ShaderType::Fragment);
 
-	GLuint vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+	OpenGLCore::Graphics::Program program;
+	program.Create({ vertexShader,fragmentShader });
 
-	int  success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	const char* fragmentShaderSource = "#version 440 core\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-		"FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\0";
-
-	GLuint fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-
-	GLuint shaderProgram;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		std::cout << "ERROR::LINKING_ERROR\n" << infoLog << std::endl;
-	}
-
-	glViewport(0, 0, windowInfo.Width, windowInfo.Height);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	OpenGLCore::VertexArray vertexArray;
-	auto vertexBuffer = std::make_shared<OpenGLCore::VertexBuffer>(vertices, sizeof(vertices));
+	OpenGLCore::Graphics::VertexArray vertexArray;
+	auto vertexBuffer = std::make_shared<OpenGLCore::Graphics::VertexBuffer>(vertices, sizeof(vertices));
 	vertexBuffer->SetLayout({
-		{OpenGLCore::ShaderDataType::Float2,"a_Position"}
+		{OpenGLCore::Graphics::ShaderDataType::Float2,"a_Position"}
 		});
 
 	vertexArray.AddVertexBuffer(vertexBuffer);
 
-	glUseProgram(shaderProgram);
+	program.Use();
 	vertexArray.Bind();
 
 	running = true;

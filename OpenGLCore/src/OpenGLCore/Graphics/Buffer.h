@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-namespace OpenGLCore
+namespace OpenGLCore::Graphics
 {
 	enum class ShaderDataType
 	{

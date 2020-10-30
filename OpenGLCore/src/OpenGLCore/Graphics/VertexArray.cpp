@@ -2,7 +2,7 @@
 #include "VertexArray.h"
 #include "glad/glad.h"
 
-namespace OpenGLCore
+namespace OpenGLCore::Graphics
 {
 	static GLenum ShaderDataTypeToOpenGLType(ShaderDataType type)
 	{

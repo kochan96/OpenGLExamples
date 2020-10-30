@@ -2,7 +2,7 @@
 #include <memory>
 #include "Buffer.h"
 
-namespace OpenGLCore
+namespace OpenGLCore::Graphics
 {
 	class VertexArray
 	{
