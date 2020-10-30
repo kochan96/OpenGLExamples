@@ -1,38 +1,27 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <OpenGLCore/Core/Window.h>
 
 
 int main()
 {
-	if (!glfwInit())
-	{
-		return EXIT_FAILURE;
-	}
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	OpenGLCore::WindowInfo windowInfo;
+	windowInfo.Width = 1024;
+	windowInfo.Height = 768;
+	windowInfo.Title = "Hello World";
 
-	auto window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-	if (!window)
+	OpenGLCore::Window window;
+	if (!window.Init(windowInfo))
 	{
-		glfwTerminate();
-		return EXIT_FAILURE;
-	}
-	
-	glfwMakeContextCurrent(window);
-
-	if (!gladLoadGL())
-	{
-		glfwTerminate();
 		return EXIT_FAILURE;
 	}
 
 	float vertices[] = {
-		-0.5f,0.0f,
-		0.5f,0.0f,
-		0.0f,0.5f
+		-1.0f,-1.0f,
+		1.0f,-1.0f,
+		0.0f,1.0f
 	};
 
 	const char* vertexShaderSource = "#version 330 core\n"
@@ -89,7 +78,7 @@ int main()
 		std::cout << "ERROR::LINKING_ERROR\n" << infoLog << std::endl;
 	}
 	
-	glViewport(0, 0, 640, 480);
+	glViewport(0, 0, windowInfo.Width, windowInfo.Height);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	unsigned int VAO;
@@ -107,18 +96,16 @@ int main()
 	glUseProgram(shaderProgram);
 	glBindVertexArray(VAO);
 
-	while (!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window.GetNative()))
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 
-		glfwSwapBuffers(window);
-
-		glfwPollEvents();
+		window.OnUpdate();
 	}
 
 
-	glfwTerminate();
+	window.Shutdown();
 	return EXIT_SUCCESS;
 }

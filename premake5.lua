@@ -7,18 +7,21 @@ workspace "OpenGLExamples"
         "Release"
     }
 
+group "Dependencies"
+    include "OpenGLCore/dependencies/glad/"
+    include "OpenGLCore/dependencies/glfw/"
+    
+group "Core"
+    include "OpenGLCore/"
+group ""
+
 outputDir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
-dependenciesDir = "dependencies/"
-mainDir = "OpenGLExamples/"
 
 IncludeDir = {}
-IncludeDir["GLAD"] = (mainDir .. dependenciesDir .. "glad/include")
-IncludeDir["GLFW"] = (mainDir .. dependenciesDir .. "glfw/include") 
+IncludeDir["OpenGLCore"] = "OpenGLCore/src/"
+IncludeDir["GLAD"] = "OpenGLCore/dependencies/glad/include/"
+IncludeDir["GLFW"] = "OpenGLCore/dependencies/glfw/include/"
 
-group "Dependencies"
-    include (mainDir .. dependenciesDir .. "glad")
-    include (mainDir .. dependenciesDir .. "glfw")
-group ""
 
 project "OpenGLExamples"
     location "OpenGLExamples"
@@ -39,15 +42,14 @@ project "OpenGLExamples"
     includedirs
     {
         "%{prj.name}/src",
+        "%{IncludeDir.OpenGLCore}",
         "%{IncludeDir.GLAD}",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
     }
 
     links
     {
-        "GLFW",
-        "Glad",
-        "opengl32.lib"
+        "OpenGLCore",
     }
 
     filter "system:windows"
