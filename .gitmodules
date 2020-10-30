@@ -1,6 +1,6 @@
 [submodule "OpenGLExamples/dependencies/glfw"]
-	path = OpenGLExamples/dependencies/glfw
+	path = OpenGLCore/dependencies/glfw
 	url = https://github.com/kochan96/glfw.git
 [submodule "OpenGLExamples/dependencies/glad"]
-	path = OpenGLExamples/dependencies/glad
+	path = OpenGLCore/dependencies/glad
 	url = https://github.com/kochan96/glad.git
