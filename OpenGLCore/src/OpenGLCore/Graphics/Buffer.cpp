@@ -3,6 +3,8 @@
 
 namespace OpenGLCore
 {
+	
+
 	static GLenum BufferUsageToBufferHint(BufferUsage bufferUsage)
 	{
 		switch (bufferUsage)
@@ -25,12 +27,13 @@ namespace OpenGLCore
 				return GL_STREAM_DRAW;
 			case BufferUsage::STREAM_READ:
 				return GL_STREAM_READ;
-			default:
-				return GL_INVALID_ENUM;
 		}
+
+		//TODO log error
+		return GL_INVALID_ENUM;
 	}
 
-	VertexBuffer::VertexBuffer(float* data, unsigned int size, BufferUsage bufferUsage)
+	VertexBuffer::VertexBuffer(float* data, unsigned long long size, BufferUsage bufferUsage)
 	{
 		glGenBuffers(1, &m_Id);
 		glBindBuffer(GL_ARRAY_BUFFER, m_Id);
@@ -42,12 +45,12 @@ namespace OpenGLCore
 		glDeleteBuffers(1, &m_Id);
 	}
 
-	void VertexBuffer::Bind()
+	void VertexBuffer::Bind() const
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, m_Id);
 	}
 
-	void VertexBuffer::UnBind()
+	void VertexBuffer::UnBind() const
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}

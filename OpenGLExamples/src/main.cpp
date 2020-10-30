@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <OpenGLCore/Core/Window.h>
 #include <OpenGLCore/Graphics/Buffer.h>
+#include <OpenGLCore/Graphics/VertexArray.h>
 
 
 int main()
@@ -25,11 +26,11 @@ int main()
 		0.0f,1.0f
 	};
 
-	const char* vertexShaderSource = "#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
+	const char* vertexShaderSource = "#version 440 core\n"
+		"layout (location = 0) in vec2 a_Position;\n"
 		"void main()\n"
 		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+		"   gl_Position = vec4(a_Position.x, a_Position.y, 0.0f, 1.0);\n"
 		"}\0";
 
 	GLuint vertexShader;
@@ -40,14 +41,14 @@ int main()
 	int  success;
 	char infoLog[512];
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	
+
 	if (!success)
 	{
 		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
-	const char* fragmentShaderSource = "#version 330 core\n"
+	const char* fragmentShaderSource = "#version 440 core\n"
 		"out vec4 FragColor;\n"
 		"void main()\n"
 		"{\n"
@@ -78,21 +79,20 @@ int main()
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
 		std::cout << "ERROR::LINKING_ERROR\n" << infoLog << std::endl;
 	}
-	
+
 	glViewport(0, 0, windowInfo.Width, windowInfo.Height);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-	unsigned int VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
+	OpenGLCore::VertexArray vertexArray;
+	auto vertexBuffer = std::make_shared<OpenGLCore::VertexBuffer>(vertices, sizeof(vertices));
+	vertexBuffer->SetLayout({
+		{OpenGLCore::ShaderDataType::Float2,"a_Position"}
+		});
 
-	OpenGLCore::VertexBuffer vertexBuffer(vertices, sizeof(vertices));
+	vertexArray.AddVertexBuffer(vertexBuffer);
 
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	
 	glUseProgram(shaderProgram);
-	glBindVertexArray(VAO);
+	vertexArray.Bind();
 
 	while (!glfwWindowShouldClose(window.GetNative()))
 	{

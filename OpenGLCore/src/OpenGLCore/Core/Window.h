@@ -7,9 +7,9 @@ namespace OpenGLCore
 {
 	struct WindowInfo
 	{
-		unsigned int Width;
-		unsigned int Height;
-		std::string Title;
+		unsigned int Width = 640;
+		unsigned int Height = 480;
+		std::string Title = "Main Window";
 		bool VSync = true;
 	};
 
