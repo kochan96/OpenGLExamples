@@ -4,3 +4,6 @@
 [submodule "OpenGLExamples/dependencies/glad"]
 	path = OpenGLCore/dependencies/glad
 	url = https://github.com/kochan96/glad.git
+[submodule "OpenGLCore/dependencies/imgui"]
+	path = OpenGLCore/dependencies/imgui
+	url = https://github.com/kochan96/imgui.git
