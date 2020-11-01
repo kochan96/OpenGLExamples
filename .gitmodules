@@ -7,3 +7,6 @@
 [submodule "OpenGLCore/dependencies/imgui"]
 	path = OpenGLCore/dependencies/imgui
 	url = https://github.com/kochan96/imgui.git
+[submodule "OpenGLCore/dependencies/spdlog"]
+	path = OpenGLCore/dependencies/spdlog
+	url = https://github.com/gabime/spdlog.git
