@@ -1,6 +1,6 @@
 #include "IndexRenderingExample.h"
+#include <OpenGLCore/Graphics/RendererAPI.h>
 
-#include <glad/glad.h>
 
 namespace OpenGLExamples
 {
@@ -13,13 +13,11 @@ namespace OpenGLExamples
 		-0.5f,0.5f,
 		};
 
-		OpenGLCore::Graphics::Shader vertexShader("assets/shaders/HelloTriangle/helloTriangle.vert", OpenGLCore::Graphics::ShaderType::Vertex);
-		OpenGLCore::Graphics::Shader fragmentShader("assets/shaders/HelloTriangle/helloTriangle.frag", OpenGLCore::Graphics::ShaderType::Fragment);
+		m_Shader = std::make_unique<OpenGLCore::Graphics::Shader>(
+			"assets/shaders/IndexRenderingExample/indexRendering.vert",
+			"assets/shaders/IndexRenderingExample/indexRendering.frag");
 
-		m_Program = std::make_unique<OpenGLCore::Graphics::Program>("Index Rendering");
-		m_Program->Create({ vertexShader,fragmentShader });
-
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		OpenGLCore::Graphics::RendererAPI::SetClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
 
 		m_VertexArray = std::make_unique<OpenGLCore::Graphics::VertexArray>();
 		auto vertexBuffer = std::make_shared<OpenGLCore::Graphics::VertexBuffer>(vertices, sizeof(vertices));
@@ -38,16 +36,37 @@ namespace OpenGLExamples
 
 		m_VertexArray->SetIndexBuffer(indexBuffer);
 
-		m_Program->Use();
+		m_Shader->Use();
+		m_Shader->SetFloat3("u_Color", m_RectangleColor);
+
 		m_VertexArray->Bind();
+	}
+
+	void IndexRenderingExample::ImGuiRender()
+	{
+		if (ImGui::Begin("Settings"))
+		{
+			if (ImGui::ColorEdit3("Clear Color", &m_ClearColor.x))
+			{
+				OpenGLCore::Graphics::RendererAPI::SetClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
+			}
+
+			if (ImGui::ColorEdit3("Rectangle Color", &m_RectangleColor.x))
+			{
+				m_Shader->SetFloat3("u_Color", m_RectangleColor);
+			}
+		}
+
+		ImGui::End();
 	}
 
 	void IndexRenderingExample::OnUpdate(OpenGLCore::Timestep ts)
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		OpenGLCore::Graphics::RendererAPI::Clear(OpenGLCore::Graphics::BufferBit::Color);
 
-		m_Program->SetBool("Test", false);
-
-		glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, 0);
+		OpenGLCore::Graphics::RendererAPI::DrawIndexed(
+			OpenGLCore::Graphics::PrimitiveType::Triangles,
+			OpenGLCore::Graphics::IndexType::UnsignedInt,
+			m_VertexArray->GetIndexBuffer()->GetCount());
 	}
 }

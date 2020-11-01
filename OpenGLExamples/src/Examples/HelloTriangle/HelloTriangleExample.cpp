@@ -1,25 +1,22 @@
 #include "HelloTriangleExample.h"
-#include <OpenGLCore/Graphics/Program.h>
-#include <OpenGLCore/Graphics/VertexArray.h>
-#include <glad/glad.h>
+#include <OpenGLCore/Graphics/RendererAPI.h>
 
 namespace OpenGLExamples
 {
 	void HelloTriangleExample::Init()
 	{
 		float vertices[] = {
-		-1.0f,-1.0f,
-		1.0f,-1.0f,
-		0.0f,1.0f
+		-0.5f,-0.5f,
+		0.5f,-0.5f,
+		0.0f,0.5f
 		};
 
-		OpenGLCore::Graphics::Shader vertexShader("assets/shaders/HelloTriangle/helloTriangle.vert", OpenGLCore::Graphics::ShaderType::Vertex);
-		OpenGLCore::Graphics::Shader fragmentShader("assets/shaders/HelloTriangle/helloTriangle.frag", OpenGLCore::Graphics::ShaderType::Fragment);
+		m_Shader = std::make_unique<OpenGLCore::Graphics::Shader>(
+			"assets/shaders/HelloTriangleExample/helloTriangle.vert",
+			"assets/shaders/HelloTriangleExample/helloTriangle.frag");
 
-		m_Program = std::make_unique<OpenGLCore::Graphics::Program>("Hello Triangle");
-		m_Program->Create({ vertexShader,fragmentShader });
+		OpenGLCore::Graphics::RendererAPI::SetClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 		m_VertexArray = std::make_unique<OpenGLCore::Graphics::VertexArray>();
 		auto vertexBuffer = std::make_shared<OpenGLCore::Graphics::VertexBuffer>(vertices, sizeof(vertices));
@@ -29,15 +26,34 @@ namespace OpenGLExamples
 
 		m_VertexArray->AddVertexBuffer(vertexBuffer);
 
-		m_Program->Use();
+		m_Shader->Use();
+		m_Shader->SetFloat3("u_Color", m_RectangleColor);
+
 		m_VertexArray->Bind();
+	}
+
+	void HelloTriangleExample::ImGuiRender()
+	{
+		if (ImGui::Begin("Settings"))
+		{
+			if (ImGui::ColorEdit3("Clear Color", &m_ClearColor.x))
+			{
+				OpenGLCore::Graphics::RendererAPI::SetClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, 1.0f);
+			}
+
+			if (ImGui::ColorEdit3("Rectangle Color", &m_RectangleColor.x))
+			{
+				m_Shader->SetFloat3("u_Color", m_RectangleColor);
+			}
+		}
+
+		ImGui::End();
 	}
 
 	void HelloTriangleExample::OnUpdate(OpenGLCore::Timestep ts)
 	{
-		glClear(GL_COLOR_BUFFER_BIT);
+		OpenGLCore::Graphics::RendererAPI::Clear(OpenGLCore::Graphics::BufferBit::Color);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		OpenGLCore::Graphics::RendererAPI::DrawArrays(OpenGLCore::Graphics::PrimitiveType::Triangles, 0, 3);
 	}
-
 }

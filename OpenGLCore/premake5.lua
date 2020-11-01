@@ -3,7 +3,10 @@ outputDir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 OpenGLCoreIncludeDir = {}
 OpenGLCoreIncludeDir["GLAD"] = "dependencies/glad/include"
 OpenGLCoreIncludeDir["GLFW"] = "dependencies/glfw/include"
+OpenGLCoreIncludeDir["IMGUI"] = "dependencies/imgui/"
 OpenGLCoreIncludeDir["SPDLOG"] = "dependencies/spdlog/include"
+OpenGLCoreIncludeDir["STB_IMAGE"] = "dependencies/stb_image/"
+OpenGLCoreIncludeDir["GLM"] = "dependencies/glm/"
 
 project "OpenGLCore"
     kind "StaticLib"
@@ -17,7 +20,7 @@ project "OpenGLCore"
     files 
     {
         "src/**.cpp",
-        "src/**.h"   
+        "src/**.h",
     }
 
     defines
@@ -30,13 +33,17 @@ project "OpenGLCore"
         "src/",
         "%{OpenGLCoreIncludeDir.GLAD}",
         "%{OpenGLCoreIncludeDir.GLFW}",
-        "%{OpenGLCoreIncludeDir.SPDLOG}"
+        "%{OpenGLCoreIncludeDir.IMGUI}",
+        "%{OpenGLCoreIncludeDir.GLM}",
+        "%{OpenGLCoreIncludeDir.SPDLOG}",
+        "%{OpenGLCoreIncludeDir.STB_IMAGE}"
     }
 
     links 
     {
         "GLFW",
         "Glad",
+        "ImGui",
         "opengl32.lib"
     }
 

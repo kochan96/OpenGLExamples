@@ -40,6 +40,8 @@ namespace OpenGLCore
 		unsigned int GetWidth() const { return m_WindowData.WindowInfo.Width; }
 		unsigned int GetHeight() const { return m_WindowData.WindowInfo.Width; }
 
+		GLFWwindow* GetWindowHandle() const { return m_WindowHandle; }
+
 	private:
 		void InitCallbacks();
 

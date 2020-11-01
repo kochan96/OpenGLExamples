@@ -26,10 +26,14 @@ namespace OpenGLCore
 		virtual void OnEvent(Events::Event& e) {}
 		virtual void OnUpdate(Timestep ts) {};
 		virtual bool Init() { return true; }
+		virtual void ImGuiRender() {};
 
 	private:
 		void OnEventApp(Events::Event& e);
 		bool InitApp();
+		bool InitImGui();
+
+		void ImGuiRenderApp();
 
 		bool m_IsRunning = false;
 		bool m_Minimized = false;

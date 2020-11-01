@@ -15,12 +15,13 @@ namespace OpenGLExamples
 		virtual void OnEvent(OpenGLCore::Events::Event& e) override;
 		virtual void OnUpdate(OpenGLCore::Timestep ts) override;
 		virtual bool Init() override;
+		virtual void ImGuiRender() override;
 
 	private:
 		template <typename T>
 		void AddTest(const std::string& name);
 		
-		void ChangeTest(const std::string& newTestName);
+		void ChangeExample(const std::string& newTestName);
 
 	private:
 		struct ExamplePair

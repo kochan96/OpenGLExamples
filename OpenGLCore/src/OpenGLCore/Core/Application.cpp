@@ -1,8 +1,14 @@
 #include "Application.h"
 #include "Logger.h"
+#include "OpenGLCore/Graphics/RendererAPI.h"
 
 #include <GLFW/glfw3.h>
-#include <glad/glad.h>
+
+#include <imgui.h>
+
+#define IMGUI_IMPL_API
+#include <examples/imgui_impl_opengl3.h>
+#include <examples/imgui_impl_glfw.h>
 
 namespace OpenGLCore
 {
@@ -13,13 +19,60 @@ namespace OpenGLCore
 
 	Application::~Application()
 	{
+		Close();
 	}
 
 	bool Application::InitApp()
 	{
 		Logger::Init();
+		if (!Graphics::RendererAPI::Init())
+			return false;
+
+		if (!InitImGui())
+			return false;
 
 		return Init();
+	}
+
+	bool Application::InitImGui()
+	{
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
+		//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;   // Enable Gamepad Controls
+
+		// Setup Dear ImGui style
+		//ImGui::StyleColorsDark();
+		ImGui::StyleColorsClassic();
+
+		if (!ImGui_ImplOpenGL3_Init("#version 440"))
+		{
+			LOG_CORE_ERROR("Could not initialize imgui for opengl");
+			return false;
+		}
+
+		if (!ImGui_ImplGlfw_InitForOpenGL(m_MainWindow->GetWindowHandle(), true))
+		{
+			LOG_CORE_ERROR("Could not initialize imgui for glfw");
+			ImGui_ImplGlfw_Shutdown();
+			return false;
+		}
+
+		return true;
+	}
+
+	void Application::ImGuiRenderApp()
+	{
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		ImGuiRender();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}
 
 	void Application::Close()
@@ -50,6 +103,8 @@ namespace OpenGLCore
 				OnUpdate(timestep);
 			}
 
+			ImGuiRenderApp();
+
 			m_MainWindow->OnUpdate();
 		}
 
@@ -79,12 +134,10 @@ namespace OpenGLCore
 		}
 
 		m_Minimized = false;
-		glViewport(0, 0, e.GetWidth(), e.GetHeight());
+		Graphics::RendererAPI::SetViewPort(0, 0, e.GetWidth(), e.GetHeight());
 
 		return false;
 	}
-
-
 
 	bool Application::OnWindowClose(Events::WindowCloseEvent& e)
 	{

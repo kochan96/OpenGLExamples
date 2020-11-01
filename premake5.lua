@@ -23,6 +23,7 @@ OpenGLExamplesIncludeDir["OpenGLCore"] = "OpenGLCore/src/"
 OpenGLExamplesIncludeDir["IMGUI"] = "OpenGLCore/dependencies/imgui/"
 OpenGLExamplesIncludeDir["GLAD"] = "OpenGLCore/dependencies/glad/include/"
 OpenGLExamplesIncludeDir["SPDLOG"] = "OpenGLCore/dependencies/spdlog/include/"
+OpenGLExamplesIncludeDir["GLM"] = "OpenGLCore/dependencies/glm/"
 
 
 project "OpenGLExamples"
@@ -48,6 +49,7 @@ project "OpenGLExamples"
         "%{OpenGLExamplesIncludeDir.OpenGLCore}",
         "%{OpenGLExamplesIncludeDir.GLAD}",
         "%{OpenGLExamplesIncludeDir.IMGUI}",
+        "%{OpenGLExamplesIncludeDir.GLM}",
         "%{OpenGLExamplesIncludeDir.SPDLOG}",
     }
 

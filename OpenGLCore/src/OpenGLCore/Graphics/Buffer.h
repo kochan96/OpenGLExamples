@@ -3,38 +3,10 @@
 #include <vector>
 
 #include "OpenGLCore/Core/Logger.h"
+#include "Enums.h"
 
 namespace OpenGLCore::Graphics
 {
-	enum class ShaderDataType
-	{
-		None = 0,
-		Float = 1,
-		Float2 = 2,
-		Float3 = 3,
-		Float4 = 4,
-		Mat3 = 5,
-		Mat4 = 6,
-		Int = 7,
-		Int2 = 8,
-		Int3 = 9,
-		Int4 = 10,
-		Bool = 11
-	};
-
-	enum class BufferUsage
-	{
-		STREAM_DRAW = 1,
-		STREAM_READ = 2,
-		STREAM_COPY = 3,
-		STATIC_DRAW = 4,
-		STATIC_READ = 5,
-		STATIC_COPY = 6,
-		DYNAMIC_DRAW = 7,
-		DYNAMIC_READ = 8,
-		DYNAMIC_COPY = 9,
-	};
-
 	static unsigned int ShaderDataTypeSize(ShaderDataType type)
 	{
 		switch (type)
@@ -52,7 +24,28 @@ namespace OpenGLCore::Graphics
 			case ShaderDataType::Bool:     return 1;
 		}
 
-		LOG_CORE_ERROR("Buffer: Invalid shader data type {}", type);
+		LOG_CORE_ERROR("ShaderDataTypeSize: Invalid shader data type {}", type);
+		return 0;
+	}
+
+	static unsigned int ShaderDataTypeToComponentCount(ShaderDataType type)
+	{
+		switch (type)
+		{
+			case ShaderDataType::Float:   return 1;
+			case ShaderDataType::Float2:  return 2;
+			case ShaderDataType::Float3:  return 3;
+			case ShaderDataType::Float4:  return 4;
+			case ShaderDataType::Mat3:    return 3; // 3* float3
+			case ShaderDataType::Mat4:    return 4; // 4* float4
+			case ShaderDataType::Int:     return 1;
+			case ShaderDataType::Int2:    return 2;
+			case ShaderDataType::Int3:    return 3;
+			case ShaderDataType::Int4:    return 4;
+			case ShaderDataType::Bool:    return 1;
+		}
+
+		LOG_CORE_ERROR("ShaderDataTypeToComponentCount: Invalid shader data type {}", type);
 		return 0;
 	}
 
@@ -71,26 +64,7 @@ namespace OpenGLCore::Graphics
 		{
 		}
 
-		unsigned int GetComponentCount() const
-		{
-			switch (Type)
-			{
-				case ShaderDataType::Float:   return 1;
-				case ShaderDataType::Float2:  return 2;
-				case ShaderDataType::Float3:  return 3;
-				case ShaderDataType::Float4:  return 4;
-				case ShaderDataType::Mat3:    return 3; // 3* float3
-				case ShaderDataType::Mat4:    return 4; // 4* float4
-				case ShaderDataType::Int:     return 1;
-				case ShaderDataType::Int2:    return 2;
-				case ShaderDataType::Int3:    return 3;
-				case ShaderDataType::Int4:    return 4;
-				case ShaderDataType::Bool:    return 1;
-			}
-
-			LOG_CORE_ERROR("Buffer: Invalid shader data type {}", Type);
-			return 0;
-		}
+		unsigned int GetComponentCount() const { return ShaderDataTypeToComponentCount(Type); }
 	};
 
 	class BufferLayout
@@ -133,7 +107,7 @@ namespace OpenGLCore::Graphics
 	class VertexBuffer
 	{
 	public:
-		VertexBuffer(float* data, unsigned long long size, BufferUsage bufferusage = BufferUsage::STATIC_DRAW);
+		VertexBuffer(float* data, unsigned long long size, BufferUsage bufferusage = BufferUsage::StaticDraw);
 		~VertexBuffer();
 
 		void Bind() const;
@@ -153,16 +127,23 @@ namespace OpenGLCore::Graphics
 	class IndexBuffer
 	{
 	public:
-		IndexBuffer(unsigned int* indices, unsigned int count, BufferUsage bufferUsage = BufferUsage::STATIC_DRAW);
+		IndexBuffer(unsigned char* indices, unsigned int count, BufferUsage bufferUsage = BufferUsage::StaticDraw);
+		IndexBuffer(unsigned short* indices, unsigned int count, BufferUsage bufferUsage = BufferUsage::StaticDraw);
+		IndexBuffer(unsigned int* indices, unsigned int count, BufferUsage bufferUsage = BufferUsage::StaticDraw);
+
+		IndexBuffer(unsigned int count, IndexType indexType = IndexType::UnsignedInt, BufferUsage bufferUsage = BufferUsage::DynamicDraw);
+
 		~IndexBuffer();
 
 		void Bind() const;
 		void UnBind() const;
 
 		unsigned int GetCount() const { return m_Count; }
+		IndexType GetIndexType() const { return m_IndexType; }
 
 	private:
 		unsigned int m_Id;
 		unsigned int m_Count;
+		IndexType m_IndexType;
 	};
 }

@@ -5,29 +5,27 @@
 
 namespace OpenGLCore::Graphics
 {
-
-
 	static GLenum BufferUsageToBufferHint(BufferUsage bufferUsage)
 	{
 		switch (bufferUsage)
 		{
-			case BufferUsage::DYNAMIC_COPY:
+			case BufferUsage::DynamicCopy:
 				return GL_DYNAMIC_COPY;
-			case BufferUsage::DYNAMIC_DRAW:
+			case BufferUsage::DynamicDraw:
 				return GL_DYNAMIC_DRAW;
-			case BufferUsage::DYNAMIC_READ:
+			case BufferUsage::DynamicRead:
 				return GL_DYNAMIC_READ;
-			case BufferUsage::STATIC_COPY:
+			case BufferUsage::StaticCopy:
 				return GL_STATIC_COPY;
-			case BufferUsage::STATIC_DRAW:
+			case BufferUsage::StaticDraw:
 				return GL_STATIC_DRAW;
-			case BufferUsage::STATIC_READ:
+			case BufferUsage::StaticRead:
 				return GL_STATIC_READ;
-			case BufferUsage::STREAM_COPY:
+			case BufferUsage::StreamCopy:
 				return GL_STREAM_COPY;
-			case BufferUsage::STREAM_DRAW:
+			case BufferUsage::StreamDraw:
 				return GL_STREAM_DRAW;
-			case BufferUsage::STREAM_READ:
+			case BufferUsage::StreamRead:
 				return GL_STREAM_READ;
 		}
 
@@ -65,14 +63,44 @@ namespace OpenGLCore::Graphics
 	// IndexBuffer //////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 
+	IndexBuffer::IndexBuffer(unsigned char* indices, unsigned int count, BufferUsage bufferUsage)
+		: m_IndexType(IndexType::UnsignedByte), m_Count(count)
+	{
+		glGenBuffers(1, &m_Id);
+		// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
+		// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state.
+		glBindBuffer(GL_ARRAY_BUFFER, m_Id);
+		glBufferData(GL_ARRAY_BUFFER, count * sizeof(unsigned char), indices, BufferUsageToBufferHint(bufferUsage));
+	}
+
+	IndexBuffer::IndexBuffer(unsigned short* indices, unsigned int count, BufferUsage bufferUsage)
+		: m_IndexType(IndexType::UnsignedByte), m_Count(count)
+	{
+		glGenBuffers(1, &m_Id);
+		// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
+		// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state.
+		glBindBuffer(GL_ARRAY_BUFFER, m_Id);
+		glBufferData(GL_ARRAY_BUFFER, count * sizeof(unsigned short), indices, BufferUsageToBufferHint(bufferUsage));
+	}
+
 	IndexBuffer::IndexBuffer(unsigned int* indices, unsigned int count, BufferUsage bufferUsage)
-		: m_Count(count)
+		: m_IndexType(IndexType::UnsignedByte), m_Count(count)
 	{
 		glGenBuffers(1, &m_Id);
 		// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
 		// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state.
 		glBindBuffer(GL_ARRAY_BUFFER, m_Id);
 		glBufferData(GL_ARRAY_BUFFER, count * sizeof(unsigned int), indices, BufferUsageToBufferHint(bufferUsage));
+	}
+
+	IndexBuffer::IndexBuffer(unsigned int count, IndexType indexType, BufferUsage bufferUsage)
+		: m_IndexType(indexType), m_Count(count)
+	{
+		glGenBuffers(1, &m_Id);
+		// GL_ELEMENT_ARRAY_BUFFER is not valid without an actively bound VAO
+		// Binding with GL_ARRAY_BUFFER allows the data to be loaded regardless of VAO state.
+		glBindBuffer(GL_ARRAY_BUFFER, m_Id);
+		glBufferData(GL_ARRAY_BUFFER, count * sizeof(unsigned int), nullptr, BufferUsageToBufferHint(bufferUsage));
 	}
 
 	IndexBuffer::~IndexBuffer()

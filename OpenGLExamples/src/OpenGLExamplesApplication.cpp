@@ -1,4 +1,5 @@
 #include "OpenGLExamplesApplication.h"
+#include "imgui.h"
 
 namespace OpenGLExamples
 {
@@ -7,7 +8,7 @@ namespace OpenGLExamples
 	{
 	}
 
-	void OpenGLExamplesApplication::ChangeTest(const std::string& newTestName)
+	void OpenGLExamplesApplication::ChangeExample(const std::string& newTestName)
 	{
 		auto it = std::find_if(m_ExamplePairs.begin(), m_ExamplePairs.end(), [&newTestName](const ExamplePair& pair) {return pair.Name == newTestName; });
 		if (it == m_ExamplePairs.end())
@@ -43,12 +44,26 @@ namespace OpenGLExamples
 		//TODO: Init ImGui
 
 		AddTest<HelloTriangleExample>("Hello Triangle");
-		AddTest<ClearColorExample>("Clear Color");
 		AddTest<IndexRenderingExample>("Index Rendering");
 
-		ChangeTest("Index Rendering");
-
 		return true;
+	}
+
+	void OpenGLExamplesApplication::ImGuiRender()
+	{
+		if (ImGui::Begin("Examples"))
+		{
+			for (auto example : m_ExamplePairs)
+			{
+				if (ImGui::Button(example.Name.c_str()))
+					ChangeExample(example.Name);
+			}
+		}
+
+		ImGui::End();
+
+		if (m_CurrentExample)
+			m_CurrentExample->ImGuiRender();
 	}
 }
 
