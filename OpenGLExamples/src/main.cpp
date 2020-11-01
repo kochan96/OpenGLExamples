@@ -1,5 +1,4 @@
-#include "Examples/HelloTriangleApplication.h"
-
+#include "OpenGLExamplesApplication.h"
 
 int main()
 {
@@ -9,8 +8,7 @@ int main()
 	windowInfo.Height = 768;
 	windowInfo.Title = "Hello World";
 
-	OpenGLExamples::HelloTriangleApplication app;
-
+	OpenGLExamples::OpenGLExamplesApplication app;
 
 	if (app.Run(windowInfo))
 		return EXIT_SUCCESS;

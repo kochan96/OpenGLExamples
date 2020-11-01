@@ -2,6 +2,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 namespace OpenGLCore::Graphics
 {
@@ -27,8 +28,8 @@ namespace OpenGLCore::Graphics
 	class Shader
 	{
 	public:
-		Shader(const ShaderSource& shaderSource);
-		Shader(const std::string& filePath, ShaderType shaderType);
+		Shader(const ShaderSource& shaderSource, const std::string& name = "Shader");
+		Shader(const std::string& filePath, ShaderType shaderType, const std::string& name = "Shader");
 		~Shader();
 
 		bool Compile();
@@ -37,10 +38,14 @@ namespace OpenGLCore::Graphics
 
 		bool GetIsCompiled() const { return m_IsCompiled; }
 
+
+
 	private:
 		std::string ReadFile(const std::string& filePath);
 
 	private:
+		std::string m_Name;
+
 		unsigned int m_Id;
 		ShaderType m_ShaderType;
 
@@ -59,10 +64,19 @@ namespace OpenGLCore::Graphics
 
 		void Use() const;
 
+		void SetBool(const std::string& name, bool value);
+		void SetInt(const std::string& name, int value);
+		void SetFloat(const std::string& name, int value);
+
+	private:
+		unsigned int GetUniformLocation(const std::string& name);
+
 	private:
 		bool m_IsLinked = false;
 		unsigned int m_Id = 0;
 		std::string m_Name; //for debug
+
+		std::unordered_map<std::string, unsigned int> m_UniformCache;
 	};
 
 }

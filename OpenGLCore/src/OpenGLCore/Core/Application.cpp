@@ -1,4 +1,5 @@
 #include "Application.h"
+#include "Logger.h"
 
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
@@ -14,13 +15,16 @@ namespace OpenGLCore
 	{
 	}
 
-	void Application::OnEvent(Events::Event& e)
+	bool Application::InitApp()
 	{
-		Events::EventDispatcher eventDispatcher(e);
-		eventDispatcher.Dispatch<Events::WindowCloseEvent>(
-			std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
-		eventDispatcher.Dispatch<Events::WindowResizeEvent>(
-			std::bind(&Application::OnWindowResize, this, std::placeholders::_1));
+		Logger::Init();
+
+		return Init();
+	}
+
+	void Application::Close()
+	{
+		m_IsRunning = false;
 	}
 
 	bool Application::Run(const WindowInfo& windowInfo)
@@ -28,9 +32,9 @@ namespace OpenGLCore
 		if (!m_MainWindow->Init(windowInfo))
 			return false;
 
-		m_MainWindow->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+		m_MainWindow->SetEventCallback(std::bind(&Application::OnEventApp, this, std::placeholders::_1));
 
-		if (!Init())
+		if (!InitApp())
 			return false;
 
 		m_IsRunning = true;
@@ -52,14 +56,18 @@ namespace OpenGLCore
 		return true;
 	}
 
-	bool Application::Init()
+	void Application::OnEventApp(Events::Event& e)
 	{
-		return true;
-	}
+		Events::EventDispatcher eventDispatcher(e);
 
-	void Application::Close()
-	{
-		m_IsRunning = false;
+		eventDispatcher.Dispatch<Events::WindowCloseEvent>(
+			std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
+
+		eventDispatcher.Dispatch<Events::WindowResizeEvent>(
+			std::bind(&Application::OnWindowResize, this, std::placeholders::_1));
+
+		if (!e.Handled)
+			OnEvent(e);
 	}
 
 	bool Application::OnWindowResize(Events::WindowResizeEvent& e)
@@ -75,6 +83,8 @@ namespace OpenGLCore
 
 		return false;
 	}
+
+
 
 	bool Application::OnWindowClose(Events::WindowCloseEvent& e)
 	{

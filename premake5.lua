@@ -10,6 +10,7 @@ workspace "OpenGLExamples"
 group "Dependencies"
     include "OpenGLCore/dependencies/glad/"
     include "OpenGLCore/dependencies/glfw/"
+    include "OpenGLCore/dependencies/imgui/"
     
 group "Core"
     include "OpenGLCore/"
@@ -17,10 +18,11 @@ group ""
 
 outputDir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-IncludeDir = {}
-IncludeDir["OpenGLCore"] = "OpenGLCore/src/"
-IncludeDir["GLAD"] = "OpenGLCore/dependencies/glad/include/"
-IncludeDir["GLFW"] = "OpenGLCore/dependencies/glfw/include/"
+OpenGLExamplesIncludeDir = {}
+OpenGLExamplesIncludeDir["OpenGLCore"] = "OpenGLCore/src/"
+OpenGLExamplesIncludeDir["IMGUI"] = "OpenGLCore/dependencies/imgui/"
+OpenGLExamplesIncludeDir["GLAD"] = "OpenGLCore/dependencies/glad/include/"
+OpenGLExamplesIncludeDir["SPDLOG"] = "OpenGLCore/dependencies/spdlog/include/"
 
 
 project "OpenGLExamples"
@@ -37,20 +39,28 @@ project "OpenGLExamples"
     {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp",
+        "%{prj.name}/assets/**"
     }
 
     includedirs
     {
         "%{prj.name}/src",
-        "%{IncludeDir.OpenGLCore}",
-        "%{IncludeDir.GLAD}",
-        "%{IncludeDir.GLFW}",
+        "%{OpenGLExamplesIncludeDir.OpenGLCore}",
+        "%{OpenGLExamplesIncludeDir.GLAD}",
+        "%{OpenGLExamplesIncludeDir.IMGUI}",
+        "%{OpenGLExamplesIncludeDir.SPDLOG}",
     }
 
     links
     {
         "OpenGLCore",
+        "ImGui"
     }
+
+    postbuildcommands 
+	{
+        '{COPY} "../OpenGLExamples/assets" "%{cfg.targetdir}/assets"',
+	}
 
     filter "system:windows"
         systemversion "latest"

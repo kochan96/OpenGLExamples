@@ -5,13 +5,15 @@
 
 #include "OpenGLCore/Events/ApplicationEvent.h"
 
+#include "Logger.h"
+
 namespace OpenGLCore
 {
 	static uint8_t windowCount = 0;
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
-		//LOG
+		LOG_CORE_ERROR("GLFW Error {}: {}", error, description);
 	}
 
 	Window::Window()
@@ -30,7 +32,7 @@ namespace OpenGLCore
 		{
 			if (!glfwInit())
 			{
-				//TODO LOG
+				LOG_CORE_ERROR("Could not initialize glfw");
 				return false;
 			}
 
@@ -53,7 +55,7 @@ namespace OpenGLCore
 
 		if (!m_WindowHandle)
 		{
-			//TODO: LOG
+			LOG_CORE_ERROR("Could not create window");
 			glfwTerminate();
 			return false;
 		}
@@ -62,7 +64,7 @@ namespace OpenGLCore
 
 		if (!gladLoadGL())
 		{
-			//TODO: LOG
+			LOG_CORE_ERROR("Could not load glad");
 			Shutdown();
 			return false;
 		}
@@ -136,7 +138,7 @@ namespace OpenGLCore
 	{
 		if (!m_WindowHandle)
 		{
-			//TODO log
+			LOG_CORE_ERROR("Window not initialized");
 			return;
 		}
 

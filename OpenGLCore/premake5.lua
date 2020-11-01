@@ -3,6 +3,7 @@ outputDir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 OpenGLCoreIncludeDir = {}
 OpenGLCoreIncludeDir["GLAD"] = "dependencies/glad/include"
 OpenGLCoreIncludeDir["GLFW"] = "dependencies/glfw/include"
+OpenGLCoreIncludeDir["SPDLOG"] = "dependencies/spdlog/include"
 
 project "OpenGLCore"
     kind "StaticLib"
@@ -28,7 +29,8 @@ project "OpenGLCore"
     {
         "src/",
         "%{OpenGLCoreIncludeDir.GLAD}",
-        "%{OpenGLCoreIncludeDir.GLFW}"
+        "%{OpenGLCoreIncludeDir.GLFW}",
+        "%{OpenGLCoreIncludeDir.SPDLOG}"
     }
 
     links 

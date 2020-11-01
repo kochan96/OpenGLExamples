@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 
+#include "OpenGLCore/Core/Logger.h"
+
 namespace OpenGLCore::Graphics
 {
 	enum class ShaderDataType
@@ -50,7 +52,7 @@ namespace OpenGLCore::Graphics
 			case ShaderDataType::Bool:     return 1;
 		}
 
-		//TODO log error
+		LOG_CORE_ERROR("Buffer: Invalid shader data type {}", type);
 		return 0;
 	}
 
@@ -86,7 +88,7 @@ namespace OpenGLCore::Graphics
 				case ShaderDataType::Bool:    return 1;
 			}
 
-			//TODO log error
+			LOG_CORE_ERROR("Buffer: Invalid shader data type {}", Type);
 			return 0;
 		}
 	};
@@ -146,5 +148,21 @@ namespace OpenGLCore::Graphics
 	private:
 		unsigned int m_Id;
 		BufferLayout m_Layout;
+	};
+
+	class IndexBuffer
+	{
+	public:
+		IndexBuffer(unsigned int* indices, unsigned int count, BufferUsage bufferUsage = BufferUsage::STATIC_DRAW);
+		~IndexBuffer();
+
+		void Bind() const;
+		void UnBind() const;
+
+		unsigned int GetCount() const { return m_Count; }
+
+	private:
+		unsigned int m_Id;
+		unsigned int m_Count;
 	};
 }

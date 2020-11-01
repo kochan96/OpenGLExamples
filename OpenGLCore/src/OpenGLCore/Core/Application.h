@@ -23,11 +23,14 @@ namespace OpenGLCore
 		virtual bool OnWindowClose(Events::WindowCloseEvent& e);
 		virtual bool OnWindowResize(Events::WindowResizeEvent& e);
 
-		virtual void OnEvent(Events::Event& e);
+		virtual void OnEvent(Events::Event& e) {}
 		virtual void OnUpdate(Timestep ts) {};
-		virtual bool Init();
+		virtual bool Init() { return true; }
 
 	private:
+		void OnEventApp(Events::Event& e);
+		bool InitApp();
+
 		bool m_IsRunning = false;
 		bool m_Minimized = false;
 		float m_LastFrameTime = 0.0f;

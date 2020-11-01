@@ -3,6 +3,8 @@
 #include <vector>
 #include <fstream>
 
+#include "OpenGLCore/Core/Logger.h"
+
 namespace OpenGLCore::Graphics
 {
 	static GLenum ShaderTypeToOpenGLShaderType(ShaderType type)
@@ -15,22 +17,24 @@ namespace OpenGLCore::Graphics
 				return GL_FRAGMENT_SHADER;
 		}
 
-		//TODO LOG;
+		LOG_CORE_ERROR("Invalid or not supported shader type");
 		return GL_INVALID_ENUM;
 	}
 
-	Shader::Shader(const ShaderSource& shaderSource)
+	Shader::Shader(const ShaderSource& shaderSource, const std::string& name)
 	{
 		m_ShaderType = shaderSource.Type;
+		m_Name = name;
 		m_Id = glCreateShader(ShaderTypeToOpenGLShaderType(m_ShaderType));
 
 		auto source = shaderSource.SourceCode.c_str();
 		glShaderSource(m_Id, 1, &source, NULL);
 	}
 
-	Shader::Shader(const std::string& filePath, ShaderType shaderType)
+	Shader::Shader(const std::string& filePath, ShaderType shaderType, const std::string& name)
 	{
 		m_ShaderType = shaderType;
+		m_Name = name;
 		m_Id = glCreateShader(ShaderTypeToOpenGLShaderType(m_ShaderType));
 
 		auto fileContent = ReadFile(filePath);
@@ -55,12 +59,12 @@ namespace OpenGLCore::Graphics
 			}
 			else
 			{
-				//TODO log
+				LOG_CORE_ERROR("Could not read from file '{0}'", filePath);
 			}
 		}
 		else
 		{
-			//TODO log
+			LOG_CORE_ERROR("Could not open file '{0}'", filePath);
 		}
 
 		return result;
@@ -80,8 +84,9 @@ namespace OpenGLCore::Graphics
 		if (!m_IsCompiled)
 		{
 			auto infoLog = GetInfoLog();
-			//TODO LOG;
-			
+			LOG_CORE_ERROR(infoLog.c_str());
+			LOG_CORE_ERROR("Shader compilation failure {}", m_Name);
+
 			glDeleteShader(m_Id);
 			m_Id = 0;
 		}
@@ -134,11 +139,12 @@ namespace OpenGLCore::Graphics
 		GLint isLinked = 0;
 		glGetProgramiv(m_Id, GL_LINK_STATUS, &isLinked);
 		m_IsLinked = (bool)isLinked;
-		
+
 		if (!m_IsLinked)
 		{
-			//TODO log;
 			auto infoLog = GetInfoLog();
+			LOG_CORE_ERROR(infoLog.c_str());
+			LOG_CORE_ERROR("Progrma link failure {}", m_Name);
 
 			glDeleteProgram(m_Id);
 
@@ -171,5 +177,39 @@ namespace OpenGLCore::Graphics
 	void Program::Use() const
 	{
 		glUseProgram(m_Id);
+	}
+
+	void Program::SetBool(const std::string& name, bool value)
+	{
+		auto location = GetUniformLocation(name);
+		glUniform1i(location, value ? 1 : 0);
+	}
+
+	void Program::SetInt(const std::string& name, int value)
+	{
+		auto location = GetUniformLocation(name);
+		glUniform1i(location, value);
+	}
+
+	void Program::SetFloat(const std::string& name, int value)
+	{
+		auto location = GetUniformLocation(name);
+		glUniform1f(location, value);
+	}
+
+	unsigned int Program::GetUniformLocation(const std::string& name)
+	{
+		auto it = m_UniformCache.find(name);
+		if (it == m_UniformCache.end())
+		{
+			auto location = glGetUniformLocation(m_Id, name.c_str());
+			if (location == -1)
+				LOG_CORE_ERROR("Could not find uniform {} in {}", name, m_Name);
+
+			m_UniformCache[name] = location;
+			return location;
+		}
+
+		return it->second;
 	}
 }

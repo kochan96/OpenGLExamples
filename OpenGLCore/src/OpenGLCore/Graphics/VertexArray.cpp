@@ -2,6 +2,8 @@
 #include "VertexArray.h"
 #include "glad/glad.h"
 
+#include "OpenGLCore/Core/Logger.h"
+
 namespace OpenGLCore::Graphics
 {
 	static GLenum ShaderDataTypeToOpenGLType(ShaderDataType type)
@@ -21,7 +23,7 @@ namespace OpenGLCore::Graphics
 			case ShaderDataType::Bool:     return GL_BOOL;
 		}
 
-		//TODO log error
+		LOG_CORE_ERROR("VertexArray: Invalid shader data type");
 		return 0;
 	}
 
@@ -97,11 +99,18 @@ namespace OpenGLCore::Graphics
 					break;
 				}
 				default:
-					//TODO: Log error
+					LOG_CORE_ERROR("Vertex Array AddVertexBuffer: Invalid Shader Data Type");
 					break;
 			}
 		}
 
 		m_VertexBuffers.push_back(vertexBuffer);
+	}
+
+	void VertexArray::SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
+	{
+		Bind();
+		indexBuffer->Bind();
+		m_IndexBuffer = indexBuffer;
 	}
 }
