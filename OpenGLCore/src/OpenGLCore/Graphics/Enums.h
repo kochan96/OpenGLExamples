@@ -5,7 +5,6 @@ namespace OpenGLCore::Graphics
 {
 	enum class ShaderDataType
 	{
-		None = 0,
 		Float = 1,
 		Float2 = 2,
 		Float3 = 3,
@@ -34,7 +33,6 @@ namespace OpenGLCore::Graphics
 
 	enum class PrimitiveType
 	{
-		Unknown = 0,
 		Point = 1,
 		Lines = 2,
 		LineLoop = 3,
@@ -46,7 +44,6 @@ namespace OpenGLCore::Graphics
 
 	enum class IndexType
 	{
-		Unknown = 0,
 		UnsignedByte = 1,
 		UnsignedShort = 2,
 		UnsignedInt = 3,
@@ -58,6 +55,44 @@ namespace OpenGLCore::Graphics
 		Color = 1 << 0,
 		Depth = 1 << 1,
 		Stencil = 1 << 2,
+	};
+
+	enum class WrapMode
+	{
+		Repeat = 1,
+		MirroredRepeat = 2,
+		ClampToEdge = 3,
+		ClampToBorder = 4,
+	};
+
+	enum class FilteringMode
+	{
+		Nearest = 1,
+		Linear = 2,
+		NearestMipmapNearest = 3,
+		NearestMipmapLinear = 4,
+		LinearMipmapNearest = 5,
+		LinearMipmapLinear = 6,
+	};
+
+	enum class DataFormat
+	{
+		RGBA8 = 1,
+		RGBA = 2,
+		RGB8 = 3,
+		RGB = 4
+	};
+
+	enum class DataType
+	{
+		Byte = 1,
+		UnsignedByte = 2,
+		Short = 3,
+		UnsignedShort = 4,
+		Int = 5,
+		UnsignedInt = 6,
+		Float = 7,
+		Double = 8,
 	};
 
 	inline BufferBit& operator |= (BufferBit& lhs, BufferBit rhs)
