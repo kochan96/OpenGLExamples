@@ -45,6 +45,7 @@ namespace OpenGLExamples
 
 		AddTest<HelloTriangleExample>("Hello Triangle");
 		AddTest<IndexRenderingExample>("Index Rendering");
+		AddTest<TextureRenderingExample>("Texture Rendering");
 
 		return true;
 	}
@@ -55,7 +56,7 @@ namespace OpenGLExamples
 		{
 			for (auto example : m_ExamplePairs)
 			{
-				if (ImGui::Button(example.Name.c_str()))
+				if (ImGui::Button(example.Name.c_str(), ImVec2(-1.0f, 0.0f)))
 					ChangeExample(example.Name);
 			}
 		}

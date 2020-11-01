@@ -24,6 +24,7 @@ OpenGLExamplesIncludeDir["IMGUI"] = "OpenGLCore/dependencies/imgui/"
 OpenGLExamplesIncludeDir["GLAD"] = "OpenGLCore/dependencies/glad/include/"
 OpenGLExamplesIncludeDir["SPDLOG"] = "OpenGLCore/dependencies/spdlog/include/"
 OpenGLExamplesIncludeDir["GLM"] = "OpenGLCore/dependencies/glm/"
+OpenGLExamplesIncludeDir["STB_IMAGE"] = "OpenGLCore/dependencies/stb_image/"
 
 
 project "OpenGLExamples"
@@ -51,6 +52,7 @@ project "OpenGLExamples"
         "%{OpenGLExamplesIncludeDir.IMGUI}",
         "%{OpenGLExamplesIncludeDir.GLM}",
         "%{OpenGLExamplesIncludeDir.SPDLOG}",
+        "%{OpenGLExamplesIncludeDir.STB_IMAGE}",
     }
 
     links
