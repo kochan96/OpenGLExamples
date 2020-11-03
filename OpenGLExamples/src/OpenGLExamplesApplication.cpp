@@ -46,6 +46,8 @@ namespace OpenGLExamples
 		AddTest<HelloTriangleExample>("Hello Triangle");
 		AddTest<IndexRenderingExample>("Index Rendering");
 		AddTest<TextureRenderingExample>("Texture Rendering");
+		AddTest<Cube3DExample>("3D Cube");
+		AddTest<LightsExamples>("Lightning");
 
 		return true;
 	}

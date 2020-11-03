@@ -114,4 +114,10 @@ namespace OpenGLCore::Graphics
 	{
 		return static_cast<BufferBit>(static_cast<uint8_t>(lhs) & static_cast<uint8_t>(rhs));
 	}
+
+
+	enum class Capability
+	{
+		DepthTest = 1,
+	};
 }

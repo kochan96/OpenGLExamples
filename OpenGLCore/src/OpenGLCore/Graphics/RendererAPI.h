@@ -25,6 +25,9 @@ namespace OpenGLCore::Graphics
 
 		static void SetViewPort(int x, int y, int width, int height);
 
+		static void Enable(Capability capability);
+		static void Disable(Capability capability);
+
 		static void DrawArrays(PrimitiveType primitiveType, unsigned int start, unsigned int count);
 		static void DrawIndexed(PrimitiveType primitiveType, IndexType indexType, unsigned int count, unsigned int offsetCount = 0);
 

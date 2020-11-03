@@ -1,4 +1,6 @@
 #include "Shader.h"
+
+#include <glm/gtc/type_ptr.hpp>
 #include <glad/glad.h>
 #include <vector>
 #include <fstream>
@@ -198,6 +200,18 @@ namespace OpenGLCore::Graphics
 	{
 		auto location = GetUniformLocation(name);
 		glUniform4f(location, value.x, value.y, value.z, value.w);
+	}
+
+	void Shader::SetMat3(const std::string& name, const glm::mat3& value)
+	{
+		auto location = GetUniformLocation(name);
+		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+	}
+
+	void Shader::SetMat4(const std::string& name, const glm::mat4& value)
+	{
+		auto location = GetUniformLocation(name);
+		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	unsigned int Shader::GetUniformLocation(const std::string& name)

@@ -1,6 +1,7 @@
 #pragma once
 #include "Examples/Example.h"
 
+#include <memory>
 #include <OpenGLCore/Graphics/Shader.h>
 #include <OpenGLCore/Graphics/VertexArray.h>
 

@@ -12,8 +12,16 @@
 
 namespace OpenGLCore
 {
+	Application* Application::m_Instance;
+
 	Application::Application()
 	{
+		if (m_Instance)
+		{
+			LOG_CORE_CRITICAL("Should be only one instance of Aplication");
+		}
+
+		m_Instance = this;
 		m_MainWindow = std::make_unique<Window>();
 	}
 
@@ -82,10 +90,11 @@ namespace OpenGLCore
 
 	bool Application::Run(const WindowInfo& windowInfo)
 	{
+		m_MainWindow->SetEventCallback(std::bind(&Application::OnEventApp, this, std::placeholders::_1));
+
 		if (!m_MainWindow->Init(windowInfo))
 			return false;
 
-		m_MainWindow->SetEventCallback(std::bind(&Application::OnEventApp, this, std::placeholders::_1));
 
 		if (!InitApp())
 			return false;

@@ -56,6 +56,8 @@ namespace OpenGLCore::Graphics
 			error = glGetError();
 		}
 
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
 		return result;
 	}
 
@@ -80,6 +82,27 @@ namespace OpenGLCore::Graphics
 	void RendererAPI::SetViewPort(int x, int y, int width, int height)
 	{
 		glViewport(x, y, width, height);
+	}
+
+	static unsigned int CapabilityToOpenGLCapability(Capability capability)
+	{
+		switch (capability)
+		{
+			case Capability::DepthTest: return GL_DEPTH_TEST;
+		}
+
+		LOG_CORE_ERROR("PrimitiveTypeToOpenGLPrimitiveType: Invalid enum");
+		return GL_INVALID_ENUM;
+	}
+
+	void RendererAPI::Enable(Capability capability)
+	{
+		glEnable(CapabilityToOpenGLCapability(capability));
+	}
+
+	void RendererAPI::Disable(Capability capability)
+	{
+		glDisable(CapabilityToOpenGLCapability(capability));
 	}
 
 	static unsigned int PrimitiveTypeToOpenGLPrimitiveType(PrimitiveType type)

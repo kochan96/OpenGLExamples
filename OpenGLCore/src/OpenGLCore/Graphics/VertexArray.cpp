@@ -35,6 +35,10 @@ namespace OpenGLCore::Graphics
 
 	VertexArray::~VertexArray()
 	{
+		for (int i = 0; i < m_VertexBufferIndex; i++)
+		{
+			glDisableVertexAttribArray(i);
+		}
 		glDeleteVertexArrays(1, &m_Id);
 	}
 

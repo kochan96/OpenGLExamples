@@ -17,7 +17,9 @@ namespace OpenGLCore
 
 		void Close();
 
-		Window& GetMainWindow() { return *m_MainWindow; }
+		static Application& Get() { return *m_Instance; };
+
+		Window& GetMainWindow() const { return *m_MainWindow; }
 
 	protected:
 		virtual bool OnWindowClose(Events::WindowCloseEvent& e);
@@ -35,9 +37,12 @@ namespace OpenGLCore
 
 		void ImGuiRenderApp();
 
+	private:
 		bool m_IsRunning = false;
 		bool m_Minimized = false;
 		float m_LastFrameTime = 0.0f;
+
+		static Application* m_Instance;
 
 		std::unique_ptr<Window> m_MainWindow;
 	};

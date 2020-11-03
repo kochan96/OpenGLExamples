@@ -72,7 +72,6 @@ namespace OpenGLCore
 		SetVSync(windowInfo.VSync);
 
 		m_WindowData.WindowInfo = windowInfo;
-
 		glfwSetWindowUserPointer(m_WindowHandle, &m_WindowData);
 
 		glfwSetWindowSizeCallback(m_WindowHandle, [](GLFWwindow* window, int width, int height)
@@ -138,7 +137,7 @@ namespace OpenGLCore
 	{
 		if (!m_WindowHandle)
 		{
-			LOG_CORE_ERROR("Window not initialized");
+			//LOG_CORE_WARNING("Window not initialized");
 			return;
 		}
 
