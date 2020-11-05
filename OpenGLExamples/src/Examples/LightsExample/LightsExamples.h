@@ -2,38 +2,39 @@
 #include "Examples/Example.h"
 
 #include <memory>
+#include <glm/glm.hpp>
+#include <vector>
+
 #include <OpenGLCore/Graphics/Shader.h>
 #include <OpenGLCore/Graphics/VertexArray.h>
 #include <OpenGLCore/Graphics/Texture2D.h>
-#include <OpenGLCore/Utility/Camera.h>
+#include <OpenGLCore/Utility/CameraController.h>
+#include <OpenGLCore/Utility/Lights.h>
 
 #include <OpenGLCore/Events/ApplicationEvent.h>
 
 
 namespace OpenGLExamples
 {
-	class LightsExamples : public Example
+	class LightsExample : public Example
 	{
-	public:
-		~LightsExamples() override;
-
 	protected:
 		virtual void Init() override;
 		virtual void OnEvent(OpenGLCore::Events::Event& e) override;
 		virtual void OnUpdate(OpenGLCore::Timestep ts) override;
-		virtual void ImGuiRender() override;
 
 	private:
-		bool OnWindowResize(OpenGLCore::Events::WindowResizeEvent& e);
-
-	private:
-		glm::mat4 m_ModelMatrix = glm::mat4(1.0f);
-
 		std::unique_ptr<OpenGLCore::Graphics::Shader> m_Shader;
 		std::unique_ptr<OpenGLCore::Graphics::VertexArray> m_VertexArray;
-		std::unique_ptr<OpenGLCore::Graphics::Texture2D> m_Texture;
-		std::unique_ptr<OpenGLCore::Graphics::Texture2D> m_Texture2;
-		std::unique_ptr<OpenGLCore::Utility::Camera> m_Camera;
+		std::unique_ptr<OpenGLCore::Graphics::Texture2D> m_DiffuseTexture;
+		std::unique_ptr<OpenGLCore::Graphics::Texture2D> m_SpecularTexture;
+		std::unique_ptr<OpenGLCore::Utility::CameraController> m_CameraController;
+
+		OpenGLCore::Utility::DirLight m_DirLight;
+		std::vector<OpenGLCore::Utility::PointLight> m_PointLights;
+		OpenGLCore::Utility::SpotLight m_SpotLight;
+
+		std::vector<glm::vec3> m_CubePositions;
 	};
 }
 

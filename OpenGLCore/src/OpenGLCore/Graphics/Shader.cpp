@@ -178,7 +178,7 @@ namespace OpenGLCore::Graphics
 		glUniform4i(location, value.x, value.y, value.z, value.w);
 	}
 
-	void Shader::SetFloat(const std::string& name, int value)
+	void Shader::SetFloat(const std::string& name, float value)
 	{
 		auto location = GetUniformLocation(name);
 		glUniform1f(location, value);

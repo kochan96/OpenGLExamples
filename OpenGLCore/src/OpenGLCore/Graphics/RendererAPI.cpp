@@ -42,6 +42,11 @@ namespace OpenGLCore::Graphics
 		m_Capabilities.Renderer = (const char*)glGetString(GL_RENDERER);
 		m_Capabilities.Version = (const char*)glGetString(GL_VERSION);
 
+		LOG_CORE_INFO("OpenGL Info:");
+		LOG_CORE_INFO("  Vendor: {0}", m_Capabilities.Vendor);
+		LOG_CORE_INFO("  Renderer: {0}", m_Capabilities.Renderer);
+		LOG_CORE_INFO("  Version: {0}", m_Capabilities.Version);
+
 		glGetIntegerv(GL_MAX_SAMPLES, &m_Capabilities.MaxSamples);
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &m_Capabilities.MaxAnisotropy);
 

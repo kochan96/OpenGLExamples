@@ -35,8 +35,8 @@ namespace OpenGLCore::Utility
 		glm::vec3 Diffuse = { 1.0f,1.0f,1.0f };
 		glm::vec3 Specular = { 1.0f,1.0f,1.0f };
 
-		float cutOff = glm::cos(glm::radians(12.5f));
-		float outerCutOff = glm::cos(glm::radians(15.0f));
+		float CutOff = glm::cos(glm::radians(12.5f));
+		float OuterCutOff = glm::cos(glm::radians(15.0f));
 
 		bool EnableAttenuation = true;
 		float Constant = 1.0f;

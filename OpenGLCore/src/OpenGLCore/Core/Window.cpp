@@ -4,6 +4,8 @@
 #include <GLFW/glfw3.h>
 
 #include "OpenGLCore/Events/ApplicationEvent.h"
+#include "OpenGLCore/Events/KeyEvent.h"
+#include "OpenGLCore/Events/MouseEvent.h"
 
 #include "Logger.h"
 
@@ -94,7 +96,77 @@ namespace OpenGLCore
 					data.EventCallback(event);
 			});
 
-		//TODO: Key and mouse events
+		glfwSetKeyCallback(m_WindowHandle, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+				switch (action)
+				{
+					case GLFW_PRESS:
+					{
+						Events::KeyPressedEvent event(static_cast<KeyCode>(key), 0);
+						data.EventCallback(event);
+						break;
+					}
+					case GLFW_RELEASE:
+					{
+						Events::KeyReleasedEvent event(static_cast<KeyCode>(key));
+						data.EventCallback(event);
+						break;
+					}
+					case GLFW_REPEAT:
+					{
+						Events::KeyPressedEvent event(static_cast<KeyCode>(key), 1);
+						data.EventCallback(event);
+						break;
+					}
+				}
+			});
+
+		glfwSetCharCallback(m_WindowHandle, [](GLFWwindow* window, unsigned int keycode)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+				Events::KeyTypedEvent event(static_cast<KeyCode>(keycode));
+				data.EventCallback(event);
+			});
+
+		glfwSetMouseButtonCallback(m_WindowHandle, [](GLFWwindow* window, int button, int action, int mods)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+				switch (action)
+				{
+					case GLFW_PRESS:
+					{
+						Events::MouseButtonPressedEvent event(static_cast<MouseCode>(button));
+						data.EventCallback(event);
+						break;
+					}
+					case GLFW_RELEASE:
+					{
+						Events::MouseButtonReleasedEvent event(static_cast<MouseCode>(button));
+						data.EventCallback(event);
+						break;
+					}
+				}
+			});
+
+		glfwSetScrollCallback(m_WindowHandle, [](GLFWwindow* window, double xOffset, double yOffset)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+				Events::MouseScrolledEvent event((float)xOffset, (float)yOffset);
+				data.EventCallback(event);
+			});
+
+		glfwSetCursorPosCallback(m_WindowHandle, [](GLFWwindow* window, double xPos, double yPos)
+			{
+				WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
+
+				Events::MouseMovedEvent event((float)xPos, (float)yPos);
+				data.EventCallback(event);
+			});
 
 		return true;
 	}

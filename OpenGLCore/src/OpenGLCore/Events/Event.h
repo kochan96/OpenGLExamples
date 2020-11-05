@@ -16,8 +16,8 @@ namespace OpenGLCore::Events
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,
 		AppTick, AppUpdate, AppRender,
-		KeyPresed, KeyReleased, KeyTyped,
-		MosueButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
+		KeyPressed, KeyReleased, KeyTyped,
+		MouseButtonPressed, MouseButtonReleased, MouseMoved, MouseScrolled
 	};
 
 	enum class EventCategory
@@ -25,7 +25,7 @@ namespace OpenGLCore::Events
 		None = 0,
 		Application = BIT(0),
 		Input = BIT(1),
-		Kayboard = BIT(2),
+		Keyboard = BIT(2),
 		Mouse = BIT(3),
 		MouseButton = BIT(4)
 	};

@@ -40,10 +40,6 @@ namespace OpenGLCore::Utility
 
 		const glm::mat4& GetProjection() const { return m_Projection; }
 
-		const glm::mat4 GetViewMatrix() const { return m_Transform.GetInverseMatrix(); }
-
-		Transform& GetTransform() { return m_Transform; }
-
 	private:
 		void RecalculateProjectection();
 
@@ -59,8 +55,6 @@ namespace OpenGLCore::Utility
 		float m_OrthographicFar = 1.0f;
 
 		float m_AspectRatio = 0.0f;
-
-		Transform m_Transform;
 
 		glm::mat4 m_Projection = glm::mat4(1.0f);
 	};

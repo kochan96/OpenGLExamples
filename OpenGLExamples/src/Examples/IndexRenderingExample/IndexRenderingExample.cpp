@@ -6,6 +6,8 @@ namespace OpenGLExamples
 {
 	void IndexRenderingExample::Init()
 	{
+		OpenGLCore::Graphics::RendererAPI::Disable(OpenGLCore::Graphics::Capability::DepthTest);
+
 		float vertices[] = {
 		-0.5f,-0.5f,
 		0.5f,-0.5f,

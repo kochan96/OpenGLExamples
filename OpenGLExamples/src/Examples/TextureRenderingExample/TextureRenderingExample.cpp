@@ -8,6 +8,8 @@ namespace OpenGLExamples
 {
 	void TextureRenderingExample::Init()
 	{
+		OpenGLCore::Graphics::RendererAPI::Disable(OpenGLCore::Graphics::Capability::DepthTest);
+
 		float vertices[] = {
 
 			//positions   //texture

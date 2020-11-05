@@ -3,65 +3,70 @@
 #include <OpenGLCore/Graphics/RendererAPI.h>
 #include <OpenGLCore/Core/Application.h>
 
+#include <glad/glad.h>
+
 namespace OpenGLExamples
 {
-	Cube3DExample::~Cube3DExample()
-	{
-		OpenGLCore::Graphics::RendererAPI::Disable(OpenGLCore::Graphics::Capability::DepthTest);
-	}
-
 	void Cube3DExample::Init()
 	{
-		m_Camera = std::make_unique<OpenGLCore::Utility::Camera>();
 		auto& window = OpenGLCore::Application::Get().GetMainWindow();
 
-		m_Camera->SetProjectionType(OpenGLCore::Utility::ProjectionType::Perspective);
-		m_Camera->GetTransform().m_Position = glm::vec3(0.0f, 0.0f, 3.0f);
-		m_Camera->SetViewportSize(window.GetWidth(), window.GetHeight());
+		constexpr float fov = glm::radians(45.0f);
+		float nearClip = 0.01f;
+		float farClip = 1000.0f;
+		unsigned int width = window.GetWidth();
+		unsigned int height = window.GetHeight();
+
+		m_CameraController = std::make_unique<OpenGLCore::Utility::CameraController>(
+			glm::radians(45.0f),
+			nearClip,
+			farClip,
+			width,
+			height);
 
 		float vertices[] = {
-			//positions			  //texture
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+			// back face
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
+			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right    
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right              
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left                
+			// front face
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right        
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left        
+			// left face
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-left       
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-left
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-right
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+			// right face
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right      
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right          
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // bottom-right
+			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // top-left
+			// bottom face          
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, // top-left        
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-left
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // top-right
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-right
+			// top face
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right                 
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
+			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, // bottom-left  
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f  // top-left              
 		};
 
 		m_Shader = std::make_unique<OpenGLCore::Graphics::Shader>(
@@ -98,20 +103,20 @@ namespace OpenGLExamples
 
 	void Cube3DExample::OnEvent(OpenGLCore::Events::Event& e)
 	{
-		OpenGLCore::Events::EventDispatcher eventDispatcher(e);
-		eventDispatcher.Dispatch<OpenGLCore::Events::WindowResizeEvent>(
-			std::bind(&Cube3DExample::OnWindowResize, this, std::placeholders::_1));
+		m_CameraController->OnEvent(e);
 	}
 
 	void Cube3DExample::OnUpdate(OpenGLCore::Timestep ts)
 	{
+		m_CameraController->OnUpdate(ts);
+
 		OpenGLCore::Graphics::RendererAPI::Clear(
 			OpenGLCore::Graphics::BufferBit::Color
 			| OpenGLCore::Graphics::BufferBit::Depth);
 
-		m_ModelMatrix = glm::rotate(m_ModelMatrix, ts * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-		const auto viewMatrix = m_Camera->GetViewMatrix();
-		const auto& projectionMatrix = m_Camera->GetProjection();
+		//m_ModelMatrix = glm::rotate(m_ModelMatrix, ts * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+		const auto& viewMatrix = m_CameraController->GetViewMatrix();
+		const auto& projectionMatrix = m_CameraController->GetProjectionMatrix();
 
 		m_Shader->SetMat4("u_ModelViewProjection", projectionMatrix * viewMatrix * m_ModelMatrix);
 
@@ -119,30 +124,5 @@ namespace OpenGLExamples
 			OpenGLCore::Graphics::PrimitiveType::Triangles,
 			0,
 			36);
-	}
-
-	void Cube3DExample::ImGuiRender()
-	{
-		if (ImGui::Begin("Camera"))
-		{
-			auto& transform = m_Camera->GetTransform();
-
-			ImGui::DragFloat3("Translation", &transform.m_Position.x, 0.1f);
-
-			auto rotationDegrees = glm::degrees(transform.m_Rotation);
-			if (ImGui::DragFloat3("Rotation", &rotationDegrees.x))
-			{
-				transform.m_Rotation = glm::radians(rotationDegrees);
-			}
-		}
-
-		ImGui::End();
-	}
-
-	bool Cube3DExample::OnWindowResize(OpenGLCore::Events::WindowResizeEvent& e)
-	{
-		m_Camera->SetViewportSize(e.GetWidth(), e.GetHeight());
-
-		return false;
 	}
 }

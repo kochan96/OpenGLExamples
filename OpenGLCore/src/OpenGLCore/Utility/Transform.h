@@ -11,6 +11,19 @@ namespace OpenGLCore::Utility
 		glm::vec3 m_Scale = { 1.0f,1.0f,1.0f };
 
 
+		glm::vec3 GetFront()
+		{
+			glm::vec3 front = glm::vec3(0.0f, 0.0f, -1.0f);
+
+			glm::mat3 rotationX = glm::rotate(glm::mat4(1.0f), m_Rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+			glm::mat3 rotationY = glm::rotate(glm::mat4(1.0f), m_Rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+			glm::mat3 rotationZ = glm::rotate(glm::mat4(1.0f), m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+
+			glm::mat3 rotationMatrix = rotationZ * rotationY * rotationX;
+
+			return rotationMatrix * front;
+		}
+
 		glm::mat4 GetMatrix() const
 		{
 			glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), m_Position);

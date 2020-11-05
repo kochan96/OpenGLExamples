@@ -46,11 +46,6 @@ namespace OpenGLExamples
 			return example;
 		};
 
-		if (m_ExamplePairs.empty())
-		{
-			m_CurrentExample = pair.CreteFunc();
-		}
-
 		m_ExamplePairs.push_back(pair);
 	}
 }
